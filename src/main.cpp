@@ -26,6 +26,12 @@ void init() {
  * Execute main program functions
  */
 void run() {
+    std::cout << "Welcome to the 2D Electric Field Simulator!" << std::endl;
+    std::cout << " * Author: Cory Torode" << std::endl;
+    std::cout << " * Date: November 30, 2023" << std::endl;
+    std::cout << "Beginning electric field simulation..." << std::endl;
+    std::cout << " * Debug Mode: " << DEBUG << std::endl;
+
     init(); // init external libraries such as glfw
     Simulation simulation{};
 
@@ -33,8 +39,8 @@ void run() {
 
     simulation.addParticle(new Particle({1, 0.1}, 0.001, 50));
     simulation.addParticle(new Particle({-1, 0}, 0.1, -50));
-    simulation.addParticle(new Particle({0.25, 1}, 0.001, 50));
-    simulation.addParticle(new Particle({3, -4}, 100, -150));
+    simulation.addParticle(new Particle({0.1, 1}, 0.01, 50));
+    simulation.addParticle(new Particle({3, -6}, 100, -100));
 
     std::cout << "Initializing glfw window..." << std::endl;
     simulation.init(1280, 720, "Interactions Between Charged Particles");
@@ -47,12 +53,6 @@ void run() {
 }
 
 int main() {
-    std::cout << "Welcome to the 2D Electric Field Simulator!" << std::endl;
-    std::cout << " * Author: Cory Torode" << std::endl;
-    std::cout << " * Date: November 30, 2023" << std::endl;
-    std::cout << "Beginning electric field simulation..." << std::endl;
-    std::cout << " * Debug Mode: " << DEBUG << std::endl;
-
     run();
     return 0;
 }

@@ -15,6 +15,7 @@ add_executable(CPPTest src/main.cpp
         src/client/entity/simulationobject.cpp
         src/client/entity/simulationobject.h
         src/client/entity/particle.cpp
-        src/client/entity/particle.h)
+        src/client/entity/particle.h
+)
 
 target_link_libraries(CPPTest PRIVATE OpenGL::GL glfw)

@@ -14,6 +14,7 @@
 class Simulation {
     float width;
     float height;
+    bool paused = false;
 private:
     // FIELDS
     GLFWwindow *window = nullptr;

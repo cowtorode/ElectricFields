@@ -101,6 +101,7 @@ void Simulation::loop() {
 }
 
 double speed = 1;
+bool spaceHeld = false;
 
 void Simulation::handleInput() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -109,6 +110,15 @@ void Simulation::handleInput() {
         speed *= 1.1;
     } else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
         speed /= 1.1;
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if (!spaceHeld) {
+            spaceHeld = true;
+            paused = !paused;
+        }
+    } else {
+        spaceHeld = false;
     }
 }
 
@@ -156,28 +166,31 @@ void Simulation::update() {
     // ai = Ei / mi
 
 
-    // iterate through each particle, checking every other particle's influence and
-    // calculating new position. Repeat until all particle accelerations have been calculated
-    for (int i = 0; i < particles.size(); i++) {
-        iParticle = particles[i];
-        for (int j = 0; j < particles.size(); j++) {
-            if (i != j) { // particle i doesn't influence itself
-                jParticle = particles[j];
-                diff = iParticle->getPosition() - jParticle->getPosition();
-                dist = diff.getMagnitude();
+    if (!paused) {
+        // iterate through each particle, checking every other particle's influence and
+        // calculating new position. Repeat until all particle accelerations have been calculated
+        for (int i = 0; i < particles.size(); i++) {
+            iParticle = particles[i];
+            for (int j = 0; j < particles.size(); j++) {
+                if (i != j) { // particle i doesn't influence itself
+                    jParticle = particles[j];
+                    diff = iParticle->getPosition() - jParticle->getPosition();
+                    dist = diff.getMagnitude();
 
-                acc += diff * jParticle->getElectricalCharge() / (dist * dist * dist);
+                    acc += diff * jParticle->getElectricalCharge() / (dist * dist * dist);
+                }
+                // a charged particles isn't influenced by its own electric field,
+                // but the acc magnitude of the sum of all other particles in the universe
             }
-            // a charged particles isn't influenced by its own electric field,
-            // but the acc magnitude of the sum of all other particles in the universe
+            iParticle->setAcceleration(acc * ELEMENTARY_CHARGE * COULOMB_CONSTANT * iParticle->getElectricalCharge() /
+                                       iParticle->getMass());
+            acc = {0, 0};
         }
-        iParticle->setAcceleration(acc * ELEMENTARY_CHARGE * COULOMB_CONSTANT * iParticle->getElectricalCharge() / iParticle->getMass());
-        acc = {0, 0};
-    }
-    // tick only after every particle's acceleration has been calculated so that
-    // next frame positions aren't incorporated into current acceleration calculations
-    for (auto & particle : particles) {
-        particle->tick(speed);
+        // tick only after every particle's acceleration has been calculated so that
+        // next frame positions aren't incorporated into current acceleration calculations
+        for (auto &particle: particles) {
+            particle->tick(speed);
+        }
     }
 }
 
